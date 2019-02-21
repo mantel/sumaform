@@ -15,62 +15,50 @@ install_{{ keypath }}:
 
 {% if grains['osrelease'] == '42.3' %}
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/openSUSE-Leap-42.3-Pool.repo
-    - source: salt://repos/repos.d/openSUSE-Leap-42.3-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.opensuse.org", true) }}/distribution/leap/42.3/repo/oss/suse/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/openSUSE-Leap-42.3-Update.repo
-    - source: salt://repos/repos.d/openSUSE-Leap-42.3-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.opensuse.org", true) }}/update/leap/42.3/oss/
 {% endif %} {# grains['osrelease'] == '42.3' #}
 
 
 {% if grains['osrelease'] == '11.4' %}
 
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-11-SP4-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-11-SP4-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") }}/repo/$RCE/SLES11-SP4-Pool/sle-11-x86_64/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-11-SP4-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-11-SP4-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") }}/repo/$RCE/SLES11-SP4-Updates/sle-11-x86_64/
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 test_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-11-SP4-x86_64-Test-Update.repo
-    - source: salt://repos/repos.d/SLE-11-SP4-x86_64-Test-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/11-SP4:/x86_64/update/
+    - gpgcheck: 1
+    - gpgkey: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/11-SP4:/x86_64/update/repodata/repomd.xml.key
 {% endif %}
 
 tools_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-Manager-Tools-SLE-11-x86_64.repo
-    - source: salt://repos/repos.d/SLE-Manager-Tools-SLE-11-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") }}/repo/$RCE/SLES11-SP4-SUSE-Manager-Tools/sle-11-x86_64/
 
 {% if 'nightly' in grains.get('product_version') | default('', true) %}
 
 tools_additional_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/Devel_Galaxy_Manager_3.2_SLE-Manager-Tools-11-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_3.2_SLE-Manager-Tools-11-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/3.2:/SLE11-SUSE-Manager-Tools/images/repo/SLE-11-SP4-CLIENT-TOOLS-ia64-ppc64-s390x-x86_64-Media1/suse/
+    - priority: 98
 
 {% elif 'head' in grains.get('product_version') | default('', true) %}
 
 tools_additional_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/Devel_Galaxy_Manager_Head_SLE-Manager-Tools-11-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_Head_SLE-Manager-Tools-11-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/Head:/SLE11-SUSE-Manager-Tools/images/repo/SLE-11-SP4-CLIENT-TOOLS-ia64-ppc64-s390x-x86_64-Media1/suse/
+    - priority: 98
 
 {% endif %}
 
@@ -80,143 +68,117 @@ tools_additional_repo:
 {% if '12' in grains['osrelease'] %}
 {% if grains['osrelease'] == '12' %}
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-12-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-SERVER/12/x86_64/product/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-12-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-SERVER/12/x86_64/update/
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 test_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-x86_64-Test-Update.repo
-    - source: salt://repos/repos.d/SLE-12-x86_64-Test-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12:/x86_64/update/
+    - gpgcheck: 1
+    - gpgkey: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12:/x86_64/update/repodata/repomd.xml.key
 {% endif %}
 
 {% elif grains['osrelease'] == '12.1' %}
 
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP1-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-12-SP1-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-SERVER/12-SP1/x86_64/product/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP1-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP1-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-SERVER/12-SP1/x86_64/update/
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 test_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP1-x86_64-Test-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP1-x86_64-Test-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP1:/x86_64/update/
+    - gpgcheck: 1
+    - gpgkey: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP1:/x86_64/update/repodata/repomd.xml.key
 {% endif %}
 
 {% elif grains['osrelease'] == '12.2' %}
 
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP2-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-12-SP2-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-SERVER/12-SP2/x86_64/product/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP2-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP2-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-SERVER/12-SP2/x86_64/update/
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 test_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP2-x86_64-Test-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP2-x86_64-Test-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP2:/x86_64/update/
+    - gpgcheck: 1
+    - gpgkey: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP2:/x86_64/update/repodata/repomd.xml.key
 {% endif %}
 
 {% elif grains['osrelease'] == '12.3' %}
 
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP3-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-12-SP3-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-SERVER/12-SP3/x86_64/product/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP3-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP3-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-SERVER/12-SP3/x86_64/update/
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 test_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP3-x86_64-Test-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP3-x86_64-Test-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP3:/x86_64/update/
+    - gpgcheck: 1
+    - gpgkey: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP3:/x86_64/update/repodata/repomd.xml.key
 {% endif %}
 
 {% elif grains['osrelease'] == '12.4' %}
 
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP4-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-12-SP4-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-SERVER/12-SP4/x86_64/product/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP4-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP4-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-SERVER/12-SP4/x86_64/update/
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 test_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-12-SP4-x86_64-Test-Update.repo
-    - source: salt://repos/repos.d/SLE-12-SP4-x86_64-Test-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP4:/x86_64/update/
+    - gpgcheck: 1
+    - gpgkey: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-SERVER:/12-SP4:/x86_64/update/repodata/repomd.xml.key
 {% endif %}
 
 {% endif %}
 
 {% if not grains.get('role') or not grains.get('role').startswith('suse_manager') %}
 tools_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-Manager-Tools-SLE-12-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-Manager-Tools-SLE-12-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-Manager-Tools/12/x86_64/product/
 
 tools_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-Manager-Tools-SLE-12-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-Manager-Tools-SLE-12-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-Manager-Tools/12/x86_64/update/
 
 {% if 'nightly' in grains.get('product_version') | default('', true) %}
 
 tools_additional_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/Devel_Galaxy_Manager_3.2_SLE-Manager-Tools-12-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_3.2_SLE-Manager-Tools-12-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/3.2:/SLE12-SUSE-Manager-Tools/images/repo/SLE-12-Manager-Tools-POOL-x86_64-Media1/
+    - priority: 98
 
 {% elif ('head' in grains.get('product_version') | default('', true)) or ('test' in grains.get('product_version') | default('', true)) %}
 
 tools_additional_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/Devel_Galaxy_Manager_Head_SLE-Manager-Tools-12-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_Head_SLE-Manager-Tools-12-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/Head:/SLE12-SUSE-Manager-Tools/images/repo/SLE-12-Manager-Tools-POOL-x86_64-Media1/
+    - priority: 98
 
 {% endif %}
 
@@ -228,31 +190,25 @@ tools_additional_repo:
 {% if not grains.get('role') or not grains.get('role').startswith('suse_manager') %}
 
 tools_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-Manager-Tools-SLE-15-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-Manager-Tools-SLE-15-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-Manager-Tools/15/x86_64/product/
 
 tools_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-Manager-Tools-SLE-15-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-Manager-Tools-SLE-15-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/SLE-15:/GA:/TEST/images/repo/SLE-15-Manager-Tools-POOL-x86_64-Media1/
 
 {% if 'nightly' in grains.get('product_version') | default('', true) %}
 
 tools_additional_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/Devel_Galaxy_Manager_3.2_SLE-Manager-Tools-15-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_3.2_SLE-Manager-Tools-15-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/3.2:/SLE15-SUSE-Manager-Tools/images/repo/SLE-15-Manager-Tools-POOL-x86_64-Media1/
+    - priority: 98
 
 {% elif ('head' in grains.get('product_version') | default('', true)) or ('test' in grains.get('product_version') | default('', true)) %}
 tools_additional_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/Devel_Galaxy_Manager_Head_SLE-Manager-Tools-15-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_Head_SLE-Manager-Tools-15-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/Head:/SLE15-SUSE-Manager-Tools/images/repo/SLE-15-Manager-Tools-POOL-x86_64-Media1/
+    - priority: 98
 
 {% endif %}
 {% endif %} {# not grains.get('role') or not grains.get('role').startswith('suse_manager') #}
@@ -260,38 +216,29 @@ tools_additional_repo:
 
 {% if '15' == grains['osrelease'] %}
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-15-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-15-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-Module-Basesystem/15/x86_64/product/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-15-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-15-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-Module-Basesystem/15/x86_64/update/
 
 {% if grains.get('use_unreleased_updates') | default(False, true) %}
 test_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-15-x86_64-Test-Update.repo
-    - source: salt://repos/repos.d/SLE-15-x86_64-Test-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/SUSE:/Maintenance:/Test:/SLE-Module-Basesystem:/15:/x86_64/update/
+    - gpgcheck: 1
 {% endif %}
 {% endif %} {# '15' == grains['osrelease'] #}
 
 {% if '15.1' == grains['osrelease'] %}
 os_pool_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-15-SP1-x86_64-Pool.repo
-    - source: salt://repos/repos.d/SLE-15-SP1-x86_64-Pool.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Products/SLE-Module-Basesystem/15-SP1/x86_64/product/
 
 os_update_repo:
-  file.managed:
-    - name: /etc/zypp/repos.d/SLE-15-SP1-x86_64-Update.repo
-    - source: salt://repos/repos.d/SLE-15-SP1-x86_64-Update.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de/ibs", true) }}/SUSE/Updates/SLE-Module-Basesystem/15-SP1/x86_64/update/
 {% endif %} {# '15.1' == grains['osrelease'] #}
 
 
@@ -335,10 +282,8 @@ galaxy_key:
 
 {% if grains.get('osmajorrelease', None)|int() == 7 %}
 tools_pool_repo:
-  file.managed:
-    - name: /etc/yum.repos.d/SLE-Manager-Tools-RES-7-x86_64.repo
-    - source: salt://repos/repos.d/SLE-Manager-Tools-RES-7-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") }}/repo/$RCE/RES7-SUSE-Manager-Tools/x86_64/
     - require:
       - cmd: galaxy_key
 
@@ -353,19 +298,16 @@ suse_res7_key:
 
 {% if 'head' in grains.get('product_version') | default('', true) %}
 tools_update_repo:
-  file.managed:
-    - name: /etc/yum.repos.d/Devel_Galaxy_Manager_Head_RES-Manager-Tools-7-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_Head_RES-Manager-Tools-7-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/Head:/RES7-SUSE-Manager-Tools/SUSE_RES-7_Update_standard/
+    - priority: 98
     - require:
       - cmd: galaxy_key
 
 {% elif 'nightly' in grains.get('product_version') | default('', true) %}
 tools_update_repo:
-  file.managed:
-    - name: /etc/yum.repos.d/Devel_Galaxy_Manager_3.2_RES-Manager-Tools-7-x86_64.repo
-    - source: salt://repos/repos.d/Devel_Galaxy_Manager_3.2_RES-Manager-Tools-7-x86_64.repo
-    - template: jinja
+  pkgrepo.managed:
+    - baseurl: http://{{ grains.get("mirror") | default("download.suse.de", true) }}/ibs/Devel:/Galaxy:/Manager:/3.2:/RES7-SUSE-Manager-Tools/SUSE_RES-7_Update_standard/
     - require:
       - cmd: galaxy_key
 {% endif %}
